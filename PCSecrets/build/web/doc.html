@@ -1,0 +1,840 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<html>
+<head>
+<meta http-equiv="CONTENT-TYPE" content="text/html; charset=utf-8">
+<title>PCSecrets</title>
+<style>
+#container {margin: 0 auto;width: 600px;	background:#fff;font: 90% arial,sans-serif;}
+#header {background:#ccc;padding: 20px;}
+#header h1 {margin: 0;}
+#content {clear: left;	padding: 20px;}
+#content p {margin:0;padding:0}
+#footer {background:#ccc;text-align: right;padding: 20px;height: 1%;}
+</style>
+</head>
+<body>
+<div id="container">
+	<div id="header">
+		<h1>
+			PCSecrets
+		</h1>
+	</div>
+	<div id="content">
+   <P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<I>PCSecrets</I> is a PC application that holds information that you
+want to keep secret - protected by a master password and strong
+encryption.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The program is designed to be a PC counterpart of the <I>Secrets</I><I>
+</I><I>for</I><I> </I><I>Android</I> app. It uses the same data
+structure and provides a synchronization mechanism that allows easy
+transfer of secrets between the two. For those who find the personal
+computer environment  more comfortable for data entry and editing
+(i.e. keyboard/mouse/screen technology), <I>PCSecrets</I> provides an
+alternative environment for managing your secrets. Synchronization is
+also effectively a form of backup.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.bulh1ck2afm4"></A>
+<FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">Encryption</FONT></FONT></H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<I>PCSecrets</I> uses AES-256 bit encryption which is the strongest
+commercially available encryption scheme. In addition it employs
+bcrypt, an algorithm which implements key stretching with an adaptive
+key setup phase.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The purpose of the bcrypt algorithm is to introduce artificial but
+complex processing into the key hashing processes, processing that
+takes a relatively large amount of time and delays the creation of
+the encryption and decryption ciphers that will be used. In
+<I>PCSecrets</I>, this setup phase is configured to take one second
+(as measured on the current computer) which is not really perceptible
+to the user. However, the result of this delay is that any attempt to
+break the encryption by guessing the password is considerably slowed
+down, since each password guess is forced to go through the same
+processing to create the decryption key.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+This makes it highly resistant to dictionary attack.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+(See &quot;key stretching&quot; and &quot;bcrypt&quot; on Wikipedia
+for more information.)</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.2u36tx9x0zez"></A>
+Features</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Features of <I>PCSecrets</I> are:</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	the same strong encryption used by <I>Secrets</I><I> </I><I>for</I><I>
+	</I><I>Android</I></P>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	a form of cryptographic<I> </I><I>plausible</I><I> </I><I>deniability</I><I>,
+	</I>whereby a hidden second set of secrets can exist that is
+	protected by a different password</P>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	synchronization with multiple <I>Secrets</I><I> </I><I>for</I><I>
+	</I><I>Android</I> devices i.e. phones, tablets</P>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	synchronization data is always fully encrypted</P>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	automatic backup on save can be enabled</P>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	import and export of CSV, JSON and XML data</P>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	written in Java, so can be executed on any system with a suitable
+	Java Virtual Machine</P>
+</UL>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+An individual secret is a collection of text fields. These have names
+such as <I>userid</I><I> </I>and <I>password</I>, and lend themselves
+to data used to access Internet sites, but this is only a suggestion
+and the fields can be used in any way you want. In particular, the
+<I>note</I> field is provided as a catch-all for holding any
+unstructured text. The exception is the first field, the <I>description</I>.
+This is used as the name of the secret, and must be unique.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.3tq2a3a1qaj"></A>
+Compared with…</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+... other programs that will protect your secrets (normally
+password-orientated). Two of the leading ones are:</P>
+<H4 STYLE="line-height: 115%; text-decoration: none; page-break-before: auto; page-break-after: auto"><A NAME="h.7fbdag95krcp"></A>
+<FONT FACE="Arial, sans-serif"><B>LastPass</B></FONT></H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+- keeps your secrets data in the cloud i.e. someone else controls it</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+- needs a server account for access, and browser add-ins to work</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+- doesn’t support mobiles (unless you pay)</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<B>KeePass</B></P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+- has no synchronization mechanism as such across platforms. You need
+to copy your secrets data from one platform/device to another (using
+some external mechanism), thereby overwriting any changes you may
+have made on the target platform.</P>
+<H2 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.kwfjcor9qj55"></A>
+Installation</H2>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+For Windows, download and run the install.exe file. This process will
+check that Java is installed.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+For other platforms (Mac and Linux), download the zip file:</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	For Debian Linux (and derivatives, such as Ubuntu, Mint etc), there
+	is a simple shell script provided which will install the program
+	files in /usr/share and create an entry in the applications menu. 
+	</P>
+</UL>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	For other systems, the process is manual. You should copy the
+	<I>PCSecrets</I> jar file to your desktop or some other suitable
+	location, and mark it executable. If the default open action for a
+	.jar file on your computer is to open using the Java run-time, then
+	simply double-click on the jar file. Otherwise right-click on the
+	jar file and select the Java run-time to open with.</P>
+</UL>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+If Java is not installed then you will have to do this before running
+<I>PCSecrets</I>. You can use the  Oracle/Sun Java, or OpenJDK on
+Linux. <I>PCSecrets</I> requires at least Java version 6, but the
+latest Java version 7 is recommended. If you have Java 6 installed,
+you would be advised to replace it with the latest Java 7 as there
+are known to be security issues with the earlier versions. There are
+also problems with the Nimbus UI Look and Feel (the best looking
+interface) with Java 6 prior to version 1.6.10.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+To support full 256-bit encryption, your Java installation may need
+additional files - see  <A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>AES</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>
+256-</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>bit</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>
+</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>encryption</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>
+</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>support</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>
+</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>and</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>
+</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>Java</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>
+</U></FONT></A><A HREF="#h.4wqd41vwlabs"><FONT COLOR="#1155cc"><U>JDKs</U></FONT></A>
+later in this document.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The program needs network access to allow synchronization with
+<I>Secrets</I><I> </I><I>for</I><I> </I><I>Android</I>. If you have a
+firewall active, you may need to configure it - see <A HREF="#h.yd2zn1t7zv0h"><FONT COLOR="#1155cc"><U>Network</U></FONT></A><A HREF="#h.yd2zn1t7zv0h"><FONT COLOR="#1155cc"><U>
+</U></FONT></A><A HREF="#h.yd2zn1t7zv0h"><FONT COLOR="#1155cc"><U>Access</U></FONT></A>
+at the end of the document. On Windows you may get a firewall
+security alert for the Java runtime when you first run <I>PCSecrets</I>,
+which you should allow (unblock).</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.mwiqi4sr9jos"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">Getting</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">
+</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">Started</FONT></FONT></FONT></H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+When first run the program will prompt for an initial password. Try
+not to use a simple password - a mixture of letters, numbers and
+special characters but no spaces (leading, trailing or embedded) is
+recommended - and don't forget it! Subsequent executions of the
+program will require the same password to be provided - if you can't
+then your secrets will not be accessible. The password can be reset
+by providing a new one, but all existing secrets will be lost. There
+is no way to recover a forgotten password.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+(Password advice is provided at the end of the document.)</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Although your initial password cannot contain spaces (because your
+can provide two - see below), subsequently you can change the
+password to anything you like, including spaces.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.kxcmlnpzhega"></A>
+Optional second set of secrets</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+You can initially provide two passwords i.e. separated by a space. In
+this case you actually create two sets of secrets, independently
+encrypted and independently accessible. When you subsequently start
+<I>PCSecrets</I>, you can provide either password to access the
+corresponding set of secrets.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The two sets of secrets are stored as a single chunk of binary data,
+combined with a random amount of randomly created “junk” data (so
+you can’t infer the existence of a second set by the file size).
+Externally it is not detectable that two sets of secrets exist, so if
+someone were to force you to reveal the password(s) to your secrets,
+you could deny that a second set of secrets existed without anyone
+being able to prove otherwise. This is known as <I>plausible</I><I>
+</I><I>deniability</I>.</P>
+<H2 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.o2fhwfruwvur"></A>
+The Main Window</H2>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The main window shows a list of secrets on the left, and a panel
+showing the details of the selected secret on the right. Beneath
+these is a row of buttons. The buttons below the list apply to your
+secrets as a whole; those below the details panel apply to the
+current secret or data in the form.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.7k66tgbukui1"></A>
+Creating a secret</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+To create a new secret, simply type your data into the details panel
+and click &quot;Create&quot;. The <I>description</I> of the secret
+becomes its name, that is shown in the list on the left. (The term
+&quot;description&quot; is used to make it compatible with <I>Secrets</I><I>
+</I><I>for</I><I> </I><I>Android</I><I> </I>- in data terms it is the
+key of the record.) The set of fields that make up a secret are the
+same as used by <I>Secrets</I><I> </I><I>for</I><I> </I><I>Android</I>,
+and all values are optional apart from &quot;description&quot;.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Create will be ignored if a secret with the same description already
+exists. Descriptions are case-insensitive.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The &quot;Clear&quot; button is provided as a quick way to clear the
+details panel of values before creating a new secret.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.p2ggzf77ezk7"></A>
+Updating a secret</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Select the secret by clicking on its entry in the list. Make your
+changes and click &quot;Update&quot;.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+If you change the description, you are now dealing with a different
+secret (because you've changed the key). If it doesn't exist, update
+will be ignored. You can copy a secret by selecting it, giving it a
+new <I>description</I> and clicking &quot;Create&quot;.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+If you modify a secret but forget to click &quot;Update&quot;, the
+changes will not be saved.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.nopschgcfo3g"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>Deleting</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>a</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>secret</B></SPAN></FONT></FONT></H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Select the secret (or type its name in the description field) and
+click &quot;Delete&quot;. If you attempt to delete a secret that does
+not exist, the request is ignored.</P>
+<H4 STYLE="line-height: 115%; text-decoration: none; page-break-before: auto; page-break-after: auto"><A NAME="h.i1snl8t5tqun"></A>
+<FONT FACE="Arial, sans-serif"><B>Saving</B></FONT></H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Click &quot;Save all&quot; to save changes to disk. If changes have
+been made and you exit the program without saving, you will be
+prompted to do so. If you do exit the program without saving, changes
+made since the last save will be lost.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.5xdnorfmzp75"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">Import</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">
+</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">and</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">
+</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">export</FONT></FONT></FONT></H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Secrets can be imported and exported in CSV, JSON and XML formats.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+CSV is a simple and commonly used data exchange format.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Both JSON and XML are more complex, and can be used by applications
+exporting data in many different ways. Rather than support data
+exported from specific applications, <I>PCSecrets</I> implements a
+generalised import facility for JSON and XML. It attempts to identify
+elements within the data that are potentially a source of secrets -
+repeated elements with simple values  (these collections of repeated
+elements are assumed to be homogeneous, otherwise the task would be
+impossibly complex). You are presented with a list of these candidate
+subsets to inspect so you can choose the most suitable.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.tosb2mxmloeq"></A>
+Import a file</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+To import secrets from an external file, select File-&gt;Import…
+Use the selection dialog to help locate the file to be imported and
+click &quot;Open&quot;.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.c9lgg9dabgu2"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>For</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>a</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>CSV</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>file</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>...</B></SPAN></FONT></FONT></H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The subsequent Input Field Names dialog identifies the field names
+from the CSV header record, if present, or numbers the fields
+sequentially if there is no header. By clicking “Continue” you
+are taken to the common Mapping dialog.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.xzmhfv8wg7fq"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>For</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>a</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>JSON</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>or</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>XML</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>file</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>...</B></SPAN></FONT></FONT></H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+After opening the file, a dialog shows what (if any) subsets of
+potentially useful data were found in the structured data. Click
+“Details” in any row to see more information about them. Choose
+one of the subsets and click “Continue”.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.lj1rm0sqowik"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>Mapping</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>dialog</B></SPAN></FONT></FONT></H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+This dialog allows you to map the fields in the input data to secrets
+fields. The initial mapping shown is based on matching field names.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+To change any mapping, click the Input field name in the Mapping
+section and choose a field from the dropdown. If there is no suitable
+mapping for the secrets field, choose “none”. An input field can
+be used more than once.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+A <I>Timestamp</I> field is used to give a secret a last updated time
+and is used during synchronization.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+When the mapping is correct, click &quot;Import&quot;.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.ka8fmd7y40cn"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>Export</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>to</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>a</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>CSV</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>/</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>JSON</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>/</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>XML</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>file</B></SPAN></FONT></FONT></H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Select File-&gt;Export...</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Choose a location for the exported file, provide a file name, choose
+the file format and click &quot;Save&quot;.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Be aware that secrets are exported in clear text, so be sure to
+delete the file as soon as possible, preferably with a command or
+program that overwrites the data e.g. shred. 
+</P>
+<H2 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.8c1hd04ry9fb"></A>
+</H2>
+<H2 STYLE="line-height: 115%; page-break-before: always"><A NAME="h.8h7ho7864fai"></A><A NAME="h.cmg1d871mxqd"></A>
+Synchronizing with <I>Secrets</I><I> </I><I>for</I><I> </I><I>Android</I></H2>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The <I>PCSecrets</I><I> </I><I>sync</I><I> </I><I>agent</I> needs to
+be installed on the Android device alongside <I>Secrets</I><I> </I><I>for</I><I>
+</I><I>Android</I>.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Synchronization takes place wirelessly. It requires your Android
+device to be connected to the local wifi network. Your firewall rules
+may need to be adjusted to allow for Java inbound UDP and TCP
+transmissions. On Windows, if your local network is marked as
+“Private/Work” then firewall rules should not need to be
+adjusted. 
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+No other network configuration is necessary - the agent and <I>PCSecrets</I>
+should detect each other automatically.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+To synchronize your secrets, click the <I>PCSecrets</I> &quot;Sync&quot;
+button and the program will wait for the agent to connect. This must
+be done <U>before</U> selecting the “Sync” option in <I>Secrets</I><I>
+</I><I>for</I><I> </I><I>Android</I>.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.57t15dnqq1m8"></A>
+Synchronization password</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Secrets are exchanged with the device only in encrypted format, and
+the password that will be used for this synchronization process must
+be specified in both <I>PCSecrets</I> and <I>Secrets</I><I> </I><I>for</I><I>
+</I><I>Android</I>. This password does not have to the the same one
+either uses for storing their secrets, but it must be the same
+password at each end of the exchange.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<I>PCSecrets</I> will by default use the same password that it uses
+for storing secrets. Alternatively you can set a preference so you
+are asked for a different password when &quot;Sync&quot; is clicked.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+On the Android device you provide the password by configuring it in
+the <I>PCSecrets</I><I> </I><I>sync</I><I> </I><I>agent</I>. You do
+this by creating a special secret in <I>Secrets</I><I> </I><I>for</I><I>
+</I><I>Android</I>, as described in the agent documentation.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.a4h1r0i5xl0v"></A>
+The synchronization process</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The program will automatically try to make the secrets in each
+location the same. In doing this, it follows these rules:</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+A secret that:</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	exists only in one location is created in the other</P>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	has been updated in one location is copied to the other *</P>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	has been deleted in one location is deleted from the other *</P>
+</UL>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+* provided that the secret in the other location has not itself been
+modified since the last sync operation. If it has been, a conflict
+exists which the program cannot resolve automatically, and you will
+have to indicate what you want it to do. The program will open the
+<I>sync</I> window so you can do this.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Normally the sync window will only be shown if a conflict exists that
+you have to resolve. If there are no conflicts the sync operation
+will complete automatically. Alternatively, you can set a preference
+so that the sync window is always shown even though they are no
+conflicts. You may want to do this so you can see exactly what is
+going on.</P>
+<H2 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.wgo54lidqq3o"></A>
+<FONT SIZE=4>The</FONT><FONT SIZE=4> </FONT><FONT SIZE=4>Sync</FONT><FONT SIZE=4>
+</FONT><FONT SIZE=4>window</FONT></H2>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The sync window shows the list of all secrets on the left, and two
+panels on the right which show the contents of the selected secret on
+the PC and on the mobile device. Items in the list are colour coded
+to show their status, and checkboxes can be used to show or hide the
+different categories.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+By default only secrets that differ between platforms are shown,
+although all secrets can be shown by checking the &quot;Show
+unchanged&quot; checkbox.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Everything except conflicts are shown for information only and
+require no action - if secrets differ, the program determines where
+the latest version is and automatically uses it to update the other
+location. Note that the content panels are normally read-only; only
+in the case of a conflict will you have the opportunity to modify the
+contents of a secret.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Conflicts are always shown and must be resolved before the sync
+operation can be completed. If you cancel the sync operation no
+changes are made.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.f1jnhk9pn6t"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">Resolving</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">
+</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">conflicts</FONT></FONT></FONT></H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+A conflict occurs if a secret has been modified on both the PC and
+device, or been changed on one and deleted from the other, since the
+last sync operation. In both cases, the user has to indicate how to
+proceed, as follows.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.kixse1sdapgc"></A>
+If modified in both locations</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Select the conflicting secret in the list window. The contents of the
+secret on PC and device are shown in the corresponding panels. You
+should update the PC secret to reflect the correct secret contents,
+and click &quot;Mark as merged&quot;. If the PC secret is already the
+correct content, just click &quot;Mark as merged&quot;. If the device
+secret is the correct version, click &quot;Copy to PC Secret&quot;
+and then &quot;Mark as merged&quot;.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+When the sync completes, the PC secret will replace the device
+secret.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.g46ihbyr075h"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>If</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>modified</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>in</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>one</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>location</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>and</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>deleted</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>from</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>the</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>other</B></SPAN></FONT></FONT></H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Select the conflicting secret in the list window. The PC and device
+panels will show in which location the secret has been deleted. Your
+choices are:</P>
+<UL>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	If the deletion is correct i.e. you want the secret also to be
+	deleted from the location where it remains, click &quot;Confirm
+	deletion&quot;</P>
+	<LI><P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+	If the deletion is not correct i.e. you want the secret to be
+	reinstated in the location from where it was deleted, click
+	&quot;Undelete&quot;. When the sync completes, the secret will be
+	reinstated from the existing copy.</P>
+</UL>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+When all conflicts have been resolved, click the “Complete Sync”
+button (which will be now be enabled) to complete the sync operation.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.kxcojv5oxwkj"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>Sync</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>
+</B></SPAN></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><SPAN STYLE="text-decoration: none"><B>timeout</B></SPAN></FONT></FONT></H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+By default <I>Secrets</I><I> </I><I>for</I><I> </I><I>Android</I>
+will only wait for two minutes for the sync operation to complete.
+This is so communication won't hang forever if sync was selected and
+<I>PCSecrets</I> is not active, or if there is some communication
+problem. You can change this value in the agent configuration in
+<I>Secrets</I><I> </I><I>for</I><I> </I><I>Android</I>.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+If the operation does timeout before it completes, no changes are
+made. The operation can simply be retried.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.1o46bzef9cgh"></A>
+<FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">Sync</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">
+</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">with</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">
+</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">two</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">
+</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">sets</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">
+</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">of</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">
+</FONT></FONT></FONT><FONT COLOR="#000000"><FONT FACE="Arial, sans-serif"><FONT SIZE=3 STYLE="font-size: 13pt">secrets</FONT></FONT></FONT></H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<I>Secrets</I><I> </I><I>for</I><I> </I><I>Android</I> does not
+support the idea of having more than one set of secrets. Sync simply
+operates with the set of secrets that is currently being accessed in
+<I>PCSecrets</I>.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.81u2tomzgee6"></A>
+View sync devices</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Selecting View-Devices on the menu bar lets you view details of the
+Android devices that have synchronized with the program. Each device
+is identified by its Android device id, but the device view allows
+you to provide a “friendly” name for future identification.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.la47op86hlmr"></A>
+Preferences</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Access via the File-&gt;Preferences... menu option. The Preferences
+window is divided into these sections:</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.rjns6quhrk70"></A>
+Sync</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Here you can change the port numbers used by the program. This would
+only normally be necessary if the ports are in use. Note that this
+requires a change to the <I>Secrets</I><I> </I><I>for</I><I> </I><I>Android</I>
+sync agent configuration so the same port is used.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.iiyn3und6iei"></A>
+Backup</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Backups can be automatically created whenever a save is performed.
+The number of backup files that are kept can be specified - when the
+number is reached, the oldest file is deleted when a new one is
+created.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+To make use of a backup, simply copy it to the <I>PCSecrets</I>
+directory, and rename it to <FONT FACE="Consolas">secrets</FONT><FONT FACE="Consolas">.</FONT><FONT FACE="Consolas">dat</FONT>
+after removing the existing one. Remember that if you have changed
+your password, you will need to use the password that was current
+when the backup was created.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.m9qhibx2gfbl"></A>
+Key Setup</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+This allows you to specify how long the encryption key setup phase
+should take (described earlier). By default this is set to one
+second. The value is specified in milliseconds.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Any change does not take effect until the encryption ciphers are
+regenerated. You trigger this by selecting the <I>Regenerate</I><I>
+</I><I>Ciphers</I> option of the File menu. The secrets are saved at
+the same time.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The ciphers are also regenerated when you change the password. 
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The current key length is also shown. This is for information only
+and cannot be changed. If <I>PCSecrets</I> is using a 128-bit key
+because of the current installation, it will show here.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.tkpkrhr3nep3"></A>
+Look and Feel</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Allows the look and feel of the UI to be changed. The default is the
+Java “Nimbus” Look and Feel (LAF).</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+There is a LAF for each system that emulates the native look of the
+system’s user interface. 
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+For the Mac platform, the native LAF is “Aqua”. However, there is
+a problem (possibly just Java 6 on OS X, following “Java for OS X
+2013-004” update) with this LAF not displaying certain dialogs. So
+you should be wary of using it. The properties dialog may not display
+using Aqua under these circumstances, which means that you cannot
+reset the LAF once Aqua is selected! You would have to manually edit
+the <FONT FACE="Consolas">pcsecrets</FONT><FONT FACE="Consolas">.</FONT><FONT FACE="Consolas">prop</FONT>
+file and remove the <FONT FACE="Consolas">lookAndFeel</FONT> entry so
+the LAF would return to the default.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.bw1tvxg9vxkb"></A>
+Log level</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+You can set the log level for diagnostic purposes. The log is created
+in the home directory and named java{n}.log.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+By default the log level is set to <I>warning</I>. Be aware that with
+the log level set to a finer level (<I>info</I> or <I>fine</I>)
+diagnostic information may be written to the log that could be used
+to compromise the security of your secrets. So do not as a matter of
+course set the log level below <I>warning</I>, and if you do, make
+sure you reset the log level afterwards and securely delete the Java
+logs.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.s93glnxroqf"></A>
+</H3>
+<H3 STYLE="line-height: 115%; page-break-before: always"><A NAME="h.ep0a3ac691n9"></A><A NAME="h.4wqd41vwlabs"></A>
+AES 256-bit encryption support and Java JDKs</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Oracle/Sun Java is subject to US export controls and by default is
+limited to 128-bit encryption. In order to enable 256-bit support,
+you must install the “Java Cryptography Extension (JCE) Unlimited
+Strength Jurisdiction Policy Files”. These can be downloaded in a
+zip file from the Oracle website, and simply involves copying the two
+policy files <FONT FACE="Consolas">local</FONT><FONT FACE="Consolas">_</FONT><FONT FACE="Consolas">policy</FONT><FONT FACE="Consolas">.</FONT><FONT FACE="Consolas">jar</FONT>
+and <FONT FACE="Consolas">US</FONT><FONT FACE="Consolas">_</FONT><FONT FACE="Consolas">export</FONT><FONT FACE="Consolas">_</FONT><FONT FACE="Consolas">policy</FONT><FONT FACE="Consolas">.</FONT><FONT FACE="Consolas">jar</FONT>
+into the Java runtime, replacing the versions already there.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<I>PCSecrets</I> will show you the location of the Java runtime it is
+using - select Help-&gt;System info and look for the “java.home”
+value. Simply append “\<FONT FACE="Consolas">lib</FONT><FONT FACE="Consolas">\</FONT><FONT FACE="Consolas">security</FONT>”
+to this value to determine the target directory for the policy files.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+For Windows, a typical example would be</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<FONT FACE="Consolas"><SPAN STYLE="background: #efefef">c</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">:\</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">Program</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">
+</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">Files</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">\</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">Java</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">\</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">jre</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">7\</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">lib</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">\</SPAN></FONT><FONT FACE="Consolas"><SPAN STYLE="background: #efefef">security</SPAN></FONT></P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+although this will vary depending on whether you are using Java 6,
+have a 64 bit installation, or using a JDK.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+OpenJDK, which is Oracle’s open-sourced version of Java, is not
+subject to these controls and is automatically enabled for 256-bit
+encryption. Unfortunately the OpenJDK distribution is only available
+for Linux.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The simplest approach is to use OpenJDK if it is available for your
+system. If you have to use Oracle/Sun Java, you must install the
+policy files as described.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+After installing the new policy files, you must have <I>PCSecrets</I>
+recognize the new 256-bit capability by restarting it and selecting
+the File -&gt; Regenerate ciphers menu action.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.ud325jb8nddp"></A>
+But do you really need 256-bit encryption?</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The simple answer is: not really. The time it would take for the
+fastest supercomputer in existence to crack 128-bit AES encryption
+that used a truly random key is a <I>lot</I> longer than the
+remaining lifetime of our planet (4-5 billion years). The fact that
+256-bit encryption would take even longer is therefore pretty
+academic.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.b6ckutghud7r"></A>
+Passwords</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The key point above is the use of a <I>truly</I><I> </I><I>random</I><I>
+</I><I>key</I>. When the key is derived from a password typed via a
+keyboard and not being specified directly (i.e. by providing a raw
+128- or 256-bit string), the number of possible keys is considerably
+reduced. The problem for a cracker changes from trying every possible
+combination of bits in the key to trying possible passwords - a much
+smaller problem.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The complexity of your password determines the <I>effective</I> key
+length of the encryption, which in most cases will be far less than
+the theoretical 128 or 256 bits. For example, a typical 8 character
+password chosen from an &quot;alphabet&quot; of 94 characters has
+been estimated to have an effective key length (“entropy”) of 18.
+Similarly, a 12 character password has an effective key length of 34,
+and a 20 character password a key length of 42.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The message is therefore that in order to be as secure as possible,
+you should choose as long and complicated a password that you can
+remember - the longer and more complex the better. <I>PCSecrets</I>
+doesn’t limit the length of password you can use, or the characters
+in it (apart from the initial password which cannot have spaces).
+Longer passwords needn't be too hard to remember - one suggestion is
+a mnemonic created using the first letter of each word in a verse of
+your favourite song. 
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+The internet has lots of advice on password selection.</P>
+<H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.yd2zn1t7zv0h"></A>
+Network Access</H3>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+If you have a firewall active you may need to configure it otherwise
+the sync feature will not work.</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<I>PCSecrets</I> uses UDP port 53165 for discovery by the Android
+device, and TCP/IP ports 9100 and 9101 (configurable via Preferences)
+to interchange encrypted secrets.</P>
+	</div>
+	<div id="footer">
+		Copyright © Chris Wood, 2014
+	</div>
+</div>
+</body>
+</html>

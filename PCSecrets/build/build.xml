@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project default="temp_build" name="Create distribution zip file">
+    <!-- Generate distribution zip with executable jars and doc file -->
+    <!--ANT 1.7 is required -->
+    
+    <!-- target dir for the distribution files -->
+    <property name="build.dir" location="/quadra-shared/Chris/build/pcsecrets" />
+    <!-- source dir for externally distributed jars -->
+    <property name="lib.dir" location="/quadra-shared/Chris/build/jars" />
+    <!-- source dir for the program material -->
+    <property name="src.dir" location="/home/chris/git/PCSecrets/PCSecrets" />
+    
+    <target name="build_date">
+        <tstamp>
+          <format property="current.time" pattern="yyyyMMdd_HHmmss" />
+        </tstamp>
+        <echo file="${build.dir}/build.properties" append="false">build_date=${current.time}</echo>
+    </target>
+    
+    <target name="version_build" depends="build_date">
+        <!-- get current version from project -->
+        <property file="${src.dir}/src/com/ceperman/pcsecrets/version.properties" />
+        <property name="this_version" value="${version}"/>
+        <antcall target="create_zip"/>
+    </target>
+    
+    <target name="temp_build" depends="build_date">
+        <property name="this_version" value="${current.time}"/>
+        <echo file="${src.dir}/bin/com/ceperman/pcsecrets/version.properties" append="false">version=${this_version}</echo>
+        <antcall target="create_zip"/>
+    </target>
+    
+    <target name="clean">
+			<delete includeEmptyDirs="true">
+				<fileset dir="${src.dir}/bin" includes="**/*" defaultexcludes="no" />
+			</delete>
+    </target>
+    
+    <target name="create_run_jar">
+        <!-- Create runnable jar with Jar-in-Jar Loader -->
+        <jar destfile="${build.dir}/pcsecrets.jar">
+            <manifest>
+                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
+                <attribute name="Rsrc-Main-Class" value="com.ceperman.pcsecrets.PCSecrets"/>
+                <attribute name="Class-Path" value="."/>
+                <attribute name="Rsrc-Class-Path" value="./ bcprov-jdk15on-149.jar json-org.jar json-path-0.9.0.jar json-smart-1.2.jar slf4j-api-1.7.5.jar"/>
+            </manifest>
+            <zipfileset src="${lib.dir}/jar-in-jar-loader.zip"/>
+            <fileset dir="${src.dir}/bin"/>
+            <zipfileset dir="${lib.dir}" includes="bcprov-jdk15on-149.jar,json-org.jar,json-path-0.9.0.jar,json-smart-1.2.jar,slf4j-api-1.7.5.jar"/>
+        </jar>
+    </target>
+    
+    <target name="create_zip" depends="delete_files, create_run_jar">
+        <!-- Create distribution zip file -->
+        <zip destfile="${build.dir}/pcsecrets-${this_version}.zip">
+            <zipfileset dir="${build.dir}" includes="pcsecrets.jar,build.properties"/>
+            <zipfileset dir="${src.dir}" includes="legal.txt,history.txt,notes.txt"/>
+            <zipfileset dir="${src.dir}/build/web" includes="doc.html"/>
+            <zipfileset dir="${src.dir}/src/resources" includes="pcsecrets96x96.png"/>
+            <zipfileset dir="${src.dir}/build/linux"/>
+        </zip>
+    </target>
+    
+    <target name="delete_files">
+        <delete file="${build.dir}/pcsecrets.jar"/>
+    </target>
+</project>

@@ -1,0 +1,27 @@
+Notes
+
+Documentation
+
+Full documentation is provided in doc.html. An up-to-date version of this can be found at
+http://pcsecrets.sourceforge.net/doc.html and via the PCSecrets Help menu.
+
+Cipher key length
+
+Current versions of Oracle Java have a deliberate in-built cipher key size restriction of 128 bits.
+This can be removed by installing the Java Cryptography Extension (JCE) Unlimited Strength Jurisdiction
+Policy Files.
+
+PCSecrets will by default use a 256 bit key, but will automatically reduce this to 128 if the Java
+runtime indicates that this is the maximum allowed. If the Unlimited Strength Jurisdiction Policy Files
+are subsequently installed, in order for PCSecrets to start using the longer key length, you must use
+the 'Regenerate Ciphers' option of the File menu, as described in the PCSecrets docs.
+
+(Some info here: http://www.javamex.com/tutorials/cryptography/unrestricted_policy_files.shtml)
+
+Java
+
+A Java runtime is required for execution.  You can use the  Oracle/Sun Java, or OpenJDK on Linux.
+PCSecrets requires at least Java version 6, but the latest Java version 7 is recommended. If you
+have Java 6 installed, you would be advised to replace it with the latest Java 7 as there are known
+to be security issues with the earlier versions. There are also problems with the Nimbus UI Look
+and Feel (the best looking interface) with Java 6 prior to version 1.6.10 (Mac users take note).

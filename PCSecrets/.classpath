@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="test"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/3"/>
+	<classpathentry kind="lib" path="/home/chris/build/json-org.jar"/>
+	<classpathentry kind="lib" path="/home/chris/build/bcprov-jdk15on-149.jar"/>
+	<classpathentry kind="lib" path="/home/chris/build/json-path-0.9.0.jar"/>
+	<classpathentry kind="lib" path="/home/chris/build/json-smart-1.2.jar"/>
+	<classpathentry kind="lib" path="/home/chris/build/slf4j-api-1.7.5.jar"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>
