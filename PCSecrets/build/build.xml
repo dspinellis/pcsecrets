@@ -55,7 +55,7 @@
         <!-- Create distribution zip file -->
         <zip destfile="${build.dir}/pcsecrets-${this_version}.zip">
             <zipfileset dir="${build.dir}" includes="pcsecrets.jar,build.properties"/>
-            <zipfileset dir="${src.dir}" includes="legal.txt,history.txt,notes.txt"/>
+            <zipfileset dir="${src.dir}" includes="history.txt,install.txt,legal.txt,readme.txt"/>
             <zipfileset dir="${src.dir}/build/web" includes="doc.html"/>
             <zipfileset dir="${src.dir}/src/resources" includes="pcsecrets96x96.png"/>
             <zipfileset dir="${src.dir}/build/linux"/>

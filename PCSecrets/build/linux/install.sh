@@ -24,9 +24,10 @@ cp pcsecrets.sh ${INSTALLDIR}
 cp pcsecrets.desktop ${DESKTOPAPPDIR}
 cp pcsecrets96x96.png ${INSTALLDIR}
 cp doc.html ${INSTALLDIR}
-cp legal.txt ${INSTALLDIR}
 cp history.txt ${INSTALLDIR}
-cp notes.txt ${INSTALLDIR}
+cp install.txt ${INSTALLDIR}
+cp legal.txt ${INSTALLDIR}
+cp readme.txt ${INSTALLDIR}
 cp build.properties ${INSTALLDIR}
 cp uninstall.sh ${INSTALLDIR}
 

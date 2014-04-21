@@ -444,17 +444,40 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
                      oldestFile = file;
                   }
                }
-               oldestFile.delete();
-               logger.log(Level.INFO, "Backup file deleted: " + oldestFile.getName());
-               files = backupDir.listFiles();
+               // ensure file is deleted or a loop will result
+               if (oldestFile.delete()) {
+                  logger.log(Level.INFO, "Backup file deleted: " + oldestFile.getName());
+                  files = backupDir.listFiles();
+               } else {
+                  String msg = MessageFormat.format(Messages.getString("MainWindow.backupfiledeletefailed"),
+                              oldestFile.getPath());
+                  JOptionPane.showMessageDialog(this, msg,
+                              Messages.getString("MainWindow.backupdeletefailedtitle"), JOptionPane.ERROR_MESSAGE);
+                  logger.log(Level.SEVERE, msg);
+                  break;
+               }
             }
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
             String timeSuffix = sdf.format(System.currentTimeMillis());
             StringBuffer sb = new StringBuffer(props.getProperty(Constants.BACKUP_DIR));
             sb.append("backup-").append(timeSuffix).append(".dat");
             String backupFileName = sb.toString();
-            listModel.saveAs(backupFileName);
-            logger.log(Level.INFO, "Backup file created: " + backupFileName);
+            int retval = listModel.saveAs(backupFileName);
+            if (retval == 0) {
+               logger.log(Level.INFO, "Backup file created: " + backupFileName);
+            } else {
+               String msg;
+               if (retval == 1) {
+                  msg = MessageFormat.format(Messages.getString("MainWindow.savecannotwrite"),
+                              backupFileName);
+               } else {
+                  msg = MessageFormat.format(Messages.getString("MainWindow.savefailed"),
+                              backupFileName);
+               }
+               JOptionPane.showMessageDialog(this, msg, Messages.getString("MainWindow.savefailedtitle"),
+                           JOptionPane.ERROR_MESSAGE);
+               logger.log(Level.SEVERE, msg);
+            }            
          }
       }
    }

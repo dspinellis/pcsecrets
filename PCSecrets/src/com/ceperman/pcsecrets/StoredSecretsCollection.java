@@ -99,40 +99,54 @@ public class StoredSecretsCollection extends EncryptableSecretsCollection {
 
   /**
    * Save the secrets to the file identified by this collection.
+   * @return 0 = OK, 1 = cannot write, 2 = other failure
    */
-  public void save() {
-     saveAs(getSourceName());
+  public int save() {
+     return saveAs(getSourceName());
   }
   
   /**
    * Save the secrets to the specified file.
    * @param fileName target filename
+   * @return 0 = OK, 1 = cannot write, 2 = other failure
    */
-  public void saveAs(String fileName) {
-    File secretsFile = new File(fileName);
-    FileOutputStream fos = null;
-    try {
-      fos = new FileOutputStream(secretsFile);
-      SecurityUtils.writeSecurityHeader(getCipherInfo().parms, fos);
-      writeEncryptedData(fos);
-      
-      /* lastly the undecryptable data */
-      if (undecryptedBytes != null && undecryptedBytes.length > 0) {
-        fos.write(undecryptedBytes);
-        if (logger.isLoggable(Level.FINE)) {
-           logger.log(Level.FINE, "save: undecryptable data length " + undecryptedBytes.length);
-           logger.log(Level.FINE, "save: overall file size " + secretsFile.length());
+  public int saveAs(String fileName) {
+     int retval = 0;
+     File secretsFile = new File(fileName);
+     FileOutputStream fos = null;
+     try {
+        secretsFile.createNewFile();
+     } catch (IOException e) {
+        retval = 2;
+     } catch (SecurityException e) {
+        retval = 1;
+     }
+     if (retval == 0) {
+        try {
+           fos = new FileOutputStream(secretsFile);
+           SecurityUtils.writeSecurityHeader(getCipherInfo().parms, fos);
+           writeEncryptedData(fos);
+
+           /* lastly the undecryptable data */
+           if (undecryptedBytes != null && undecryptedBytes.length > 0) {
+              fos.write(undecryptedBytes);
+              if (logger.isLoggable(Level.FINE)) {
+                 logger.log(Level.FINE, "save: undecryptable data length " + undecryptedBytes.length);
+                 logger.log(Level.FINE, "save: overall file size " + secretsFile.length());
+              }
+           }
+        } catch (Exception e) {
+           logger.log(Level.SEVERE, "save: " + e.getMessage());
+           retval = 2;
+        } finally {
+           try {
+              if (fos != null) {
+                 fos.close();
+              }
+           } catch (IOException e) {} /* ignore any problem here */
         }
-      }
-    } catch (Exception e) {
-      logger.log(Level.SEVERE, "save: " + e.getMessage());
-    } finally {
-      try {
-        if (fos != null) {
-          fos.close();
-        }
-      } catch (IOException e) {} /* ignore any problem here */
-    }
+     }
+     return retval;
   }
   
   /**

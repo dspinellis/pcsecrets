@@ -48,8 +48,9 @@ Section "PCSecrets (required)"
   File "/quadra-shared/Chris/build/pcsecrets/windows/pcsecrets.exe"
   File "/home/chris/git/PCSecrets/PCSecrets/build/web/doc.html"
   File "/home/chris/git/PCSecrets/PCSecrets/history.txt"
+  File "/home/chris/git/PCSecrets/PCSecrets/install.txt"
   File "/home/chris/git/PCSecrets/PCSecrets/legal.txt"
-  File "/home/chris/git/PCSecrets/PCSecrets/notes.txt"
+  File "/home/chris/git/PCSecrets/PCSecrets/readme.txt"
   File "/quadra-shared/Chris/build/pcsecrets/build.properties"
   
   ; Write the installation path into the registry
@@ -86,10 +87,12 @@ Section "Uninstall"
 
   ; Remove files and uninstaller
   Delete $INSTDIR\pcsecrets.exe
-  Delete $INSTDIR\doc.txt
+  Delete $INSTDIR\doc.html
   Delete $INSTDIR\history.txt
+  Delete $INSTDIR\install.txt
   Delete $INSTDIR\legal.txt
-  Delete $INSTDIR\notes.txt
+  Delete $INSTDIR\readme.txt
+  Delete $INSTDIR\build.properties
   Delete $INSTDIR\uninstall.exe
 
   ; Remove shortcuts, if any

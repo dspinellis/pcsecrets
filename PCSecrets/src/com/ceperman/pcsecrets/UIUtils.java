@@ -430,7 +430,9 @@ public class UIUtils {
                   /* convert chars into bytes without using an intermediate String class */
                   CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
                   ByteBuffer bbuf = encoder.encode(CharBuffer.wrap(password));
-                  pwsdBytes = bbuf.array();
+                  // bug001 2014/04/15 only chars up to buf limit should be copied
+                  pwsdBytes = new byte[bbuf.limit()];
+                  System.arraycopy(bbuf.array(), 0, pwsdBytes, 0, bbuf.limit());
                } catch (CharacterCodingException e) {
                   password = null;
                }
@@ -485,7 +487,7 @@ public class UIUtils {
 			dialog.setVisible(true);
 			/* this variation of JOptionPane returns the option and not the index */
 			retval = Strings.indexOf((String) optionPane.getValue(), options);
-			if (retval == 2) {
+			if (retval > 0) {
 				break;
 			}
 			
@@ -496,7 +498,10 @@ public class UIUtils {
 				/* convert chars into bytes without using an intermediate String class */
 				CharsetEncoder encoder = Charset.forName("UTF-8").newEncoder();
 				ByteBuffer bbuf = encoder.encode(CharBuffer.wrap(password));
-				mainWindow.getListModel().setPswdBytes(bbuf.array());
+			// bug001 2014/04/15 only chars up to buf limit should be copied
+				byte[] pswd = new byte[bbuf.limit()];
+            System.arraycopy(bbuf.array(), 0, pswd, 0, bbuf.limit());
+				mainWindow.getListModel().setPswdBytes(pswd);
 			} catch (CharacterCodingException e) {
 				password = null;
 			}
