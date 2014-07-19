@@ -31,7 +31,7 @@ public class CipherTest {
 		byte[] cipherText = null;
 		CipherInfo cipherInfo = null;
 		
-		SecretsProperties.getInitialInstance(".pcsecrets-dev");
+		SecretsProperties.getInitialInstance(".pcsecrets-dev", false);
 		SecurityUtils.checkBCProvider();
 		
 		pswd = "aaaa";

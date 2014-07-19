@@ -3,7 +3,7 @@
 #
 # Usage: build version_type
 #
-# version__type is version_build or test_build (default)
+# version__type is version_build or temp_build (default)
 #
 
 # clean and build the project first !!!

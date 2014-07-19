@@ -345,7 +345,7 @@ public class DeviceView extends JDialog implements ActionListener {
     * @param args
     */
    public static void main(String[] args) {
-      SecretsProperties.getInitialInstance("temp");
+      SecretsProperties.getInitialInstance("temp", false);
       SyncDeviceCollection sdc = new SyncDeviceCollection();
       sdc.add(new SyncDevice("1234567890"));
       sdc.add(new SyncDevice("abcdefghik"));

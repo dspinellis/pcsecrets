@@ -33,13 +33,16 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Vector;
 import java.util.logging.Level;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.swing.BorderFactory;
@@ -83,8 +86,8 @@ public class SecretsProperties implements ActionListener {
 	private static final String secretsFileName = "secrets.dat";
 	private static final String propsFileName = "pcsecrets.props";
    
-   private static final String DEFAULT_DIR = "pcsecrets";
-   private static final String DEFAULT_DIR_WIN = "PCSecrets";
+   private static final String DEFAULT_PCS_DIR = "pcsecrets"; // default subdir name
+   private static final String DEFAULT_PCS_DIR_WIN = "PCSecrets";
    
    /** Logged system properties */
    public static final String[] loggedProps = {
@@ -96,6 +99,7 @@ public class SecretsProperties implements ActionListener {
       "java.class.path",
       "java.home",
       "user.dir",
+      "user.home",
       "user.country",
       "user.language",
       "os.name",
@@ -103,8 +107,12 @@ public class SecretsProperties implements ActionListener {
       "os.arch"
       };
    
-   /* overridable properties (via command line) */
-   private static String defaultDir = DEFAULT_DIR;
+//   /* overridable properties (via command line) */
+//   private static String defaultDir = DEFAULT_PCS_DIR;
+   
+   // these are accessed from static methods
+   private static String pcsecretsDir;
+   private static boolean fullPath;
 	
 	/* customizable properties */
 	private static Properties defaultProps = new Properties();
@@ -112,6 +120,7 @@ public class SecretsProperties implements ActionListener {
 	private static SecretsProperties theInstance;
 	private Properties props = new Properties();
    private File propsFile;
+   private List<LogRecord> logRecords = new ArrayList<LogRecord>();
 	
 	private Frame parent;
 	
@@ -156,11 +165,20 @@ public class SecretsProperties implements ActionListener {
 	 * 
 	 * Ensure properties file exists.
 	 * Load in existing properties if any.
+	 * 
+	 * The Log is not available during the constructor, so log messages are
+	 * buffered.
+	 * 
 	 * @param dir properties file directory (from command line arg)
+	 * @param fullPath true = full path
 	 */
-	private SecretsProperties(String propDir) {
-	   if (propDir != null && propDir.length() > 0) {
-	      defaultDir = propDir;
+	private SecretsProperties(String pcsDir, boolean fullPath) {
+	   if (pcsDir != null && pcsDir.length() > 0) {
+//	      defaultDir = pcsDir;
+	      pcsecretsDir = pcsDir;
+	      SecretsProperties.fullPath = fullPath;
+	   } else {
+	      pcsecretsDir = DEFAULT_PCS_DIR;
 	   }
       
       // setup LAF info map
@@ -188,7 +206,9 @@ public class SecretsProperties implements ActionListener {
       }
 	   
 	   defaultProps = createDefaultProps();
-	   String fileName = createFullPathDir() + propsFileName;
+	   String path = createFullPathDir();
+	   logRecords.add(new LogRecord(Level.INFO, "PCSecrets path: " + path));
+	   String fileName = path + propsFileName;
 	   /* ensure dir exists */
 	   File dir = new File(createFullPathDir());
 	   if (!dir.exists()) {
@@ -200,14 +220,14 @@ public class SecretsProperties implements ActionListener {
 	   try {
 	      if (propsFile.createNewFile()) {
 	         saveProperties();
-	         logger.log(Level.FINE, "Created properties file: " + fileName);
+	         logRecords.add(new LogRecord(Level.FINE, "Created properties file: " + fileName));
 	      }
 	      fr = new FileReader(propsFile);
 	      props.load(fr);
-	      logger.log(Level.FINE, "Loaded properties file: " + fileName);
+	      logRecords.add(new LogRecord(Level.FINE, "Loaded properties file: " + fileName));
 	   } catch (IOException e) {
-	      logger.log(Level.WARNING, "IOException loading properties file: " + fileName + " - " + e.getMessage());
-	      logger.log(Level.WARNING, "Defaults will be used");
+	      logRecords.add(new LogRecord(Level.WARNING, "IOException loading properties file: " + fileName + " - " + e.getMessage()));
+	      logRecords.add(new LogRecord(Level.WARNING, "Defaults will be used"));
 	   }
 	}
 
@@ -235,11 +255,12 @@ public class SecretsProperties implements ActionListener {
    * If the instance already exists, it is set to null and a
    * NullPointerException is thrown.
    * @param dir properties file directory
+   * @param dirFull true = full path, false = PCSecrets dir only
    * @return SecretsProperties
    */
-  public static synchronized SecretsProperties getInitialInstance(String dir) {
+  public static synchronized SecretsProperties getInitialInstance(String dir, boolean dirFull) {
     if (theInstance == null) {
-      theInstance = new SecretsProperties(dir);
+      theInstance = new SecretsProperties(dir, dirFull);
     } else {
       theInstance = null;
       throw new NullPointerException();
@@ -818,26 +839,34 @@ public class SecretsProperties implements ActionListener {
 	}
 
 	/*
-	 * Create the full path to the secrets directory.
+	 * Create the full path to the secrets directory. A command line override
+	 * can provide a relative (PCSecrets subdir) name or full path alternative.
 	 * 
-	 * Examples:
+	 * Default examples:
 	 * - on *nix, /home/chris/.pcsecrets/
-	 * - on windows, c:\Documents and Settings\chris\Application Data\pcsecrets\
+	 * - on windows:
+	 *   pre-Vista: c:\documents and settings\chris\application data\pcsecrets\
+	 *   Vista, 7: c:\Users\chris\appdata\pcsecrets\
 	 * 
 	 * On Windows, if the default has not been overridden, use a more suitable
 	 * upper/lower case dir name i.e. PCSecrets
 	 */
 	private static String createFullPathDir() {
-		StringBuffer fileName = new StringBuffer(System.getProperty("user.home") + File.separator);
-		if (!isWindows()) { // not windows, make dir hidden
-			fileName.append(".");
-		} else {
-			fileName.append("Application Data").append(File.separator);
-			if (defaultDir.equals(DEFAULT_DIR)) {
-			   defaultDir = DEFAULT_DIR_WIN;
-			}
+		StringBuffer fileName = new StringBuffer();
+		if (!fullPath) { // relative path
+		   if (!isWindows()) { // not windows, make dir hidden
+	         fileName.append(System.getProperty("user.home") + File.separator).append(".");
+	      } else {
+	         fileName.append(System.getenv("APPDATA")).append(File.separator);
+	         if (pcsecretsDir.equals(DEFAULT_PCS_DIR)) {
+	            pcsecretsDir = DEFAULT_PCS_DIR_WIN;
+	         }
+	      }
 		}
-		fileName.append(defaultDir).append(File.separator);
+		fileName.append(pcsecretsDir);
+		if (!fileName.toString().endsWith(File.separator)) {
+		   fileName.append(File.separator);
+		}
 		return fileName.toString();
    }
 
@@ -896,13 +925,20 @@ public class SecretsProperties implements ActionListener {
   }
 	
 	/**
+    * @return the logRecords
+    */
+   public List<LogRecord> getLogRecords() {
+      return logRecords;
+   }
+
+   /**
 	 * For testing only
 	 * 
 	 * @param args
 	 */
 	public static void main(String[] args) {
 		SecretsProperties instance = 
-		       SecretsProperties.getInitialInstance(args.length > 0 ? args[0] : null);
+		       SecretsProperties.getInitialInstance(args.length > 0 ? args[0] : null, false);
 		JFrame frame = new JFrame();
 		instance.showDialog(frame);
 	}

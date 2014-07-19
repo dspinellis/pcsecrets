@@ -23,10 +23,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.text.MessageFormat;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
+import java.util.logging.LogRecord;
 import java.util.logging.Logger;
 
 import javax.swing.JList;
@@ -57,16 +60,57 @@ public class PCSecrets {
 	/* message area */
 	private JTextArea areaMsg;
 	
+	private boolean initOK;
+	
 	/**
-	 * Constructor - this creates the main window
-	 * @param dir properties file directory
+	 * Constructor
+	 * 
+	 * This processes any args, initiates logging and sets up the properties.
+	 * 
+	 * Logging level can be set using the /l level arg
+	 * PCSecrets dir can be set using /d (relative) or /D (absolute) arg
+	 * 
+	 * @param args
 	 */
-	public PCSecrets(String dir) {
-		initLogging();
-		props = SecretsProperties.getInitialInstance(dir);
-		setLoggingLevel();
+	public PCSecrets(String[] args) {
+	   String logParmLevel = null;
+	   String dir = null;
+	   boolean dirFull = false;
+	   
+	   for (int i = 0; i < args.length; i++) {
+         if (args[i].startsWith("/") && args.length > i+1) {
+            if (args[i].equalsIgnoreCase("/l")) {
+               logParmLevel = args[i+1].toUpperCase();
+            } else if (args[i].equalsIgnoreCase("/d")) {
+               dir = args[i+1];
+               if (args[i].equals("/D")) {
+                  dirFull = true;
+               }
+            }
+            i++;
+         } else {
+            String errorMsg = MessageFormat.format(Messages.getString("PCSecrets.argerror"), args[i]);
+            System.out.println(errorMsg);
+            return;
+         }
+      }
+	   
+	   /*
+	    * Logging cannot be properly initialised until the props are accessed to
+	    * find the logging level
+	    */
+		props = SecretsProperties.getInitialInstance(dir, dirFull);
+		initLogging(logParmLevel);
+		logger.log(Level.INFO, "Args: " + Arrays.toString(args));
+		// log any buffered records
+		List<LogRecord> logRecords = props.getLogRecords();
+		for (LogRecord logRecord : logRecords) {
+         logger.log(logRecord);
+      }
 		props.logSystemProperties();
 		SecurityUtils.checkBCProvider();
+		
+		initOK = true;
 	}
 
 	   /**
@@ -88,6 +132,7 @@ public class PCSecrets {
     * @throws IOException
     */
 	public void execute() throws IOException {
+	   if (!initOK) return;
 	   try {
          for (LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
             logger.log(Level.FINE, "Installed L&F: " + info.getClassName() + " " + info.getName());
@@ -212,8 +257,8 @@ public class PCSecrets {
 	public static void main(final String[] args) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-            PCSecrets pcSecrets = new PCSecrets(args.length > 0 ? args[0] : null);
 			   try {
+			      PCSecrets pcSecrets = new PCSecrets(args);
 			      pcSecrets.execute();
 			   } catch (IOException e) {
 			      final String msg = e.getMessage();
@@ -295,13 +340,16 @@ public class PCSecrets {
 	/*
 	 * Initialise logging.
 	 * 
+	 * If a logging level is provided, also set the log level.
+	 * 
 	 * If init fails, just continue without logging.
 	 */
-	private void initLogging() {
+	private void initLogging(String parmLevel) {
 		String logParms = "handlers=java.util.logging.FileHandler, java.util.logging.ConsoleHandler \n" +
 		  				  "java.util.logging.FileHandler.formatter=java.util.logging.SimpleFormatter";
 		try {
 			LogManager.getLogManager().readConfiguration(new ByteArrayInputStream(logParms.getBytes()));
+			setLoggingLevel(parmLevel);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -316,8 +364,9 @@ public class PCSecrets {
 	 * below FINE causes real performance problems because of logging from system
 	 * components.
 	 */
-	private void setLoggingLevel() {
-		String loglevel = props == null ? "" : props.getProperty(Constants.LOG_LEVEL);
+	private void setLoggingLevel(String parmLevel) {
+      String loglevel = parmLevel != null ? parmLevel : 
+                  (props != null ? props.getProperty(Constants.LOG_LEVEL) : "");
 		if (loglevel.length() > 0) {
 			Logger myRootLogger = Logger.getLogger("com.ceperman");
 			myRootLogger.setLevel(Level.parse(loglevel));

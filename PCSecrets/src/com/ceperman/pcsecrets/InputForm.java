@@ -251,7 +251,6 @@ public class InputForm extends JPanel implements SecretsForm, KeyListener {
 	 * @return HostSecret
 	 */
 	public HostSecret updateSecretFromInput(HostSecret secret) {
-//		secret.setDescription(fieldDescr.getText());
 		secret.setUsername(fieldId.getText());
 		secret.setPassword(fieldPswd.getText());
 		secret.setEmail(fieldEmail.getText());
@@ -366,17 +365,29 @@ public class InputForm extends JPanel implements SecretsForm, KeyListener {
          } else if (c instanceof Container) installContextMenu((Container) c);
       }
    }
+   
+   private boolean ignoreNext = false;
 
    @Override
-   public void keyPressed(KeyEvent arg0) {
+   /*
+    * Detect CTRL-C to prevent it being seen as a change
+    */
+   public void keyPressed(KeyEvent e) {
+      if (e.getKeyCode() == KeyEvent.VK_C && e.isControlDown()) {
+         ignoreNext = true;
+     }
    }
 
    @Override
-   public void keyReleased(KeyEvent arg0) {
+   public void keyReleased(KeyEvent e) {
    }
 
    @Override
-   public void keyTyped(KeyEvent arg0) {
-      setChanged(true);
+   public void keyTyped(KeyEvent e) {
+      if (!ignoreNext) {
+         setChanged(true); // set changed unless CTRL+c (copy)
+      } else {
+         ignoreNext = false;
+      }
    }
 }
