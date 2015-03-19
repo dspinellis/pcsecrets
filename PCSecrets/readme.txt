@@ -1,13 +1,9 @@
-PCSecrets 1.1.3 2014-07-18
+PCSecrets 1.2.0 2015-03-19
 
 New in this version:
-  - changed the way the PCSecrets directory path is determined on Windows.
-    Previously the special "Application Data" construct was used but this
-    appeared not to work on some Win7 systems. Now uses the environment
-    variable APPDATA value.
-  - add /l [level] cmd line option for logging
-  - don't interpret clipboard copy as a change to secret data - was triggering
-    "entry has been updated" message
+  - inactivity timeout feature added
+  - network access now delayed until sync function is requested, so if this
+    feature isn't used, no network access is required.
 
 IMPORTANT: if you are updating from version 1.1.1, read below!
 

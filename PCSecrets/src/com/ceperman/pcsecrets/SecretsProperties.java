@@ -27,6 +27,8 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -37,6 +39,7 @@ import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -107,10 +110,11 @@ public class SecretsProperties implements ActionListener {
       "os.arch"
       };
    
-//   /* overridable properties (via command line) */
-//   private static String defaultDir = DEFAULT_PCS_DIR;
+   /* supported languages */
+   private static String[] languages = { "SecretsProperties.languagedef", "SecretsProperties.languageen", "SecretsProperties.languagefr" };
+   private static String[] locales = { "default", "en", "fr" };
    
-   // these are accessed from static methods
+   /* these are accessed from static methods */
    private static String pcsecretsDir;
    private static boolean fullPath;
 	
@@ -123,6 +127,7 @@ public class SecretsProperties implements ActionListener {
    private List<LogRecord> logRecords = new ArrayList<LogRecord>();
 	
 	private Frame parent;
+	private PropertyChangeSupport pcs;
 	
 	/* map class names to L&F string descriptors */
 	static final Map<String, String> lookandfeelInfo = new HashMap<String, String>();
@@ -145,16 +150,23 @@ public class SecretsProperties implements ActionListener {
 	private JRadioButton logInfoButton;
 	private JRadioButton logFineButton;
 	private JCheckBox enableBackupCheckBox = new JCheckBox();
+	private JCheckBox enableTimeoutCheckBox = new JCheckBox();
+	private JCheckBox saveOnTimeoutCheckBox = new JCheckBox();
 	private JCheckBox suppressSyncDialogCheckBox = new JCheckBox();
 	private JTextField fieldBackupCount;
 	private JButton selectDirButton;
    private JTextField fieldKeySetupTime;
    private JComboBox<String> fieldLookAndFeels;
    private JTextArea lAndFDescription = new JTextArea();
+   private JTextField fieldTimeoutTime;
+   private JComboBox<String> fieldLanguages;
 	
 	/* Accessible for enable/disable */
 	private JLabel fieldBackupDirDesc;
 	private JLabel fieldBackupCountText;
+	
+	private JLabel fieldTimeoutTimeText;
+	private JLabel fieldSaveOnTimeoutText;
 	
 	/* Actions */
 	private static final String SELECT_BACKUP_DIR = "selectBackupDir";
@@ -174,7 +186,6 @@ public class SecretsProperties implements ActionListener {
 	 */
 	private SecretsProperties(String pcsDir, boolean fullPath) {
 	   if (pcsDir != null && pcsDir.length() > 0) {
-//	      defaultDir = pcsDir;
 	      pcsecretsDir = pcsDir;
 	      SecretsProperties.fullPath = fullPath;
 	   } else {
@@ -229,6 +240,16 @@ public class SecretsProperties implements ActionListener {
 	      logRecords.add(new LogRecord(Level.WARNING, "IOException loading properties file: " + fileName + " - " + e.getMessage()));
 	      logRecords.add(new LogRecord(Level.WARNING, "Defaults will be used"));
 	   }
+	   String language = props.getProperty(Constants.LANGUAGE);
+	   for (int i = 0; i < locales.length; i++) {
+         if (locales[i].equals(language)) {
+            Locale.setDefault(new Locale(locales[i]));
+         }
+      }
+	   /* replace the language name with its translation */
+	   for (int i = 0; i < languages.length; i++) {
+         languages[i] = Messages.getString(languages[i]);
+      }
 	}
 
    private Properties createDefaultProps() {
@@ -247,6 +268,11 @@ public class SecretsProperties implements ActionListener {
       defaultProps.put(Constants.MAX_BACKUP_COUNT, "5");
       defaultProps.put(Constants.KEY_SETUP_TIME, "1000");
       defaultProps.put(Constants.LOOK_AND_FEEL, defaultLAFClassName);
+      defaultProps.put(Constants.LANGUAGE, "default");
+      defaultProps.put(Constants.TIMEOUT_ENABLED, "false");
+      defaultProps.put(Constants.TIMEOUT_TIME, "30");
+      defaultProps.put(Constants.SAVE_ON_TIMEOUT, "true");
+      defaultProps.put(Constants.LANGUAGE, "default");
       return defaultProps;
    }
   
@@ -380,6 +406,12 @@ public class SecretsProperties implements ActionListener {
 		dialog.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 		dialog.setModalityType(ModalityType.APPLICATION_MODAL);
 		
+		// initialize support for firing property changes at the main window
+		if (pcs == null) {
+		   pcs = new PropertyChangeSupport(this);
+		   pcs.addPropertyChangeListener((PropertyChangeListener)parent);
+		}
+		
 		Container cp = dialog.getContentPane();
 		cp.setLayout(new BoxLayout(cp, BoxLayout.PAGE_AXIS));
 		
@@ -392,6 +424,8 @@ public class SecretsProperties implements ActionListener {
 		tabbedPane.addTab(Messages.getString("SecretsProperties.keysetuptitle"), null,createKeySetupPane());
 		tabbedPane.addTab(Messages.getString("SecretsProperties.lookandfeeltitle"), null,createLookAndFeelPane());   
       tabbedPane.addTab(Messages.getString("SecretsProperties.logtitle"), null, createLogPane());
+      tabbedPane.addTab(Messages.getString("SecretsProperties.timeouttitle"), null, createTimeoutPane());
+      tabbedPane.addTab(Messages.getString("SecretsProperties.languagetitle"), null, createLanguagePane());
     
 		/* create the bottom buttons */
 		JPanel actionButtons = new JPanel(new FlowLayout());
@@ -540,12 +574,8 @@ public class SecretsProperties implements ActionListener {
     * Create pane for backup properties
     */
    private JPanel createBackupPane() {
-      JPanel backupPane = new JPanel(new BorderLayout());
-      JPanel backupContentPane = new JPanel();
-      backupContentPane.setLayout(new BoxLayout(backupContentPane, BoxLayout.PAGE_AXIS));
-      backupPane.add(backupContentPane, BorderLayout.CENTER);
-
       /* backup panel */
+      JPanel backupPane = new JPanel(new BorderLayout());
       /* create titled border with inner and outer spacing */
       backupPane.setBorder(BorderFactory.createCompoundBorder(
                   BorderFactory.createEmptyBorder(5, 5, 5, 5),
@@ -589,6 +619,91 @@ public class SecretsProperties implements ActionListener {
       enableBackupCheckBox.setSelected(getProperty(Constants.BACKUP_ENABLED).equals("true"));
       enableBackupFields(enableBackupCheckBox.isSelected()); // enable/disable fields
       return backupPane;
+   }
+
+   /**
+    * Create pane for timeout properties
+    */
+   private JPanel createTimeoutPane() {
+      /* timeout panel */
+      JPanel timeoutPane = new JPanel(new BorderLayout());
+      /* create titled border with inner and outer spacing */
+      timeoutPane.setBorder(BorderFactory.createCompoundBorder(
+                  BorderFactory.createEmptyBorder(5, 5, 5, 5),
+                  BorderFactory.createCompoundBorder(
+                              BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray),
+                                          Messages.getString("SecretsProperties.timeouttitle")),
+                              BorderFactory.createEmptyBorder(5, 5, 5, 5))));
+      /* enable timeout checkbox */
+      JPanel enableTimeoutCheckboxArea = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      timeoutPane.add(enableTimeoutCheckboxArea, BorderLayout.NORTH);
+      enableTimeoutCheckboxArea.add(enableTimeoutCheckBox);
+      enableTimeoutCheckBox.addActionListener(new ActionListener() {
+         public void actionPerformed(ActionEvent event) {
+            enableTimeoutFields(enableTimeoutCheckBox.isSelected());
+         }
+      });
+      enableTimeoutCheckboxArea.add(new JLabel(Messages.getString("SecretsProperties.enabletimeout"), JLabel.LEFT));
+      /* timeout options pane */
+      JPanel timeoutOptionsPane = new JPanel(new BorderLayout());
+      timeoutPane.add(timeoutOptionsPane, BorderLayout.CENTER);
+      timeoutOptionsPane.setBorder(BorderFactory.createCompoundBorder(
+                  BorderFactory.createEmptyBorder(5, 5, 5, 5),
+                  BorderFactory.createCompoundBorder(BorderFactory.createLineBorder(Color.gray),
+                              BorderFactory.createEmptyBorder(5, 5, 5, 5))));
+      
+      JPanel timeoutTimePane = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      fieldTimeoutTimeText = new JLabel(Messages.getString("SecretsProperties.idletimetext"), JLabel.LEFT);
+      timeoutTimePane.add(fieldTimeoutTimeText);
+      fieldTimeoutTime = new JTextField(getProperty(Constants.TIMEOUT_TIME));
+      fieldTimeoutTime.setColumns(3);
+      timeoutTimePane.add(fieldTimeoutTime);
+      timeoutOptionsPane.add(timeoutTimePane, BorderLayout.NORTH);
+      /* save on timeout checkbox */
+      JPanel saveOnTimeoutCheckboxArea = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      timeoutOptionsPane.add(saveOnTimeoutCheckboxArea, BorderLayout.CENTER);
+      saveOnTimeoutCheckboxArea.add(saveOnTimeoutCheckBox);
+      fieldSaveOnTimeoutText = new JLabel(Messages.getString("SecretsProperties.saveontimeout"), JLabel.LEFT);
+      saveOnTimeoutCheckboxArea.add(fieldSaveOnTimeoutText);
+      
+      enableTimeoutCheckBox.setSelected(getProperty(Constants.TIMEOUT_ENABLED).equals("true"));
+      saveOnTimeoutCheckBox.setSelected(getProperty(Constants.SAVE_ON_TIMEOUT).equals("true"));
+      enableTimeoutFields(enableTimeoutCheckBox.isSelected()); // enable/disable fields
+      return timeoutPane;
+   }
+
+   /**
+    * Create pane for language setting
+    */
+   private JPanel createLanguagePane() {
+      /* language panel */
+      JPanel languagePane = new JPanel(new BorderLayout());
+      /* create titled border with inner and outer spacing */
+      languagePane.setBorder(BorderFactory.createCompoundBorder(
+                  BorderFactory.createEmptyBorder(5, 5, 5, 5),
+                  BorderFactory.createCompoundBorder(
+                              BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.gray),
+                                          Messages.getString("SecretsProperties.languagetitle")),
+                              BorderFactory.createEmptyBorder(5, 5, 5, 5))));
+      JPanel fieldsPane = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      languagePane.add(fieldsPane, BorderLayout.NORTH);
+      JLabel labelDescr = new JLabel(Messages.getString("SecretsProperties.languagestxt"), JLabel.LEFT);
+      fieldsPane.add(labelDescr);
+      
+      fieldLanguages = new JComboBox<String>(languages);
+      fieldsPane.add(fieldLanguages);
+      for (int i = 0; i < locales.length; i++) {
+         if ((locales[i]).equals(getProperty(Constants.LANGUAGE))) {
+            fieldLanguages.setSelectedIndex(i);
+            break;
+         }
+      }
+      JPanel infoPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+      JLabel infoTxt = new JLabel(Messages.getString("SecretsProperties.langinfotxt"), JLabel.LEFT);
+      infoPanel.add(infoTxt);
+      languagePane.add(infoPanel, BorderLayout.CENTER);
+      
+      return languagePane;
    }
    
    /**
@@ -742,10 +857,12 @@ public class SecretsProperties implements ActionListener {
          props.setProperty(Constants.MAX_BACKUP_COUNT, fieldBackupCount.getText());
          changed = true;
       }
+      /* key setup settings */
       if (!getProperty(Constants.KEY_SETUP_TIME).equals(fieldKeySetupTime.getText())) {
          props.setProperty(Constants.KEY_SETUP_TIME, fieldKeySetupTime.getText());
          changed = true;
       }
+      /* look and feel settings */
       String newLookAndFeel = (String)fieldLookAndFeels.getSelectedItem();
       String newLookAndFeelClassName = landfNameToClass.get(newLookAndFeel);
       if (!getProperty(Constants.LOOK_AND_FEEL).equals(newLookAndFeelClassName)) {
@@ -761,6 +878,32 @@ public class SecretsProperties implements ActionListener {
          }
          changed = true;
       }
+      /* timeout settings */
+      if (!getProperty(Constants.TIMEOUT_ENABLED).equals(enableTimeoutCheckBox.isSelected() ? "true" : "false")) {
+         props.setProperty(Constants.TIMEOUT_ENABLED, enableTimeoutCheckBox.isSelected() ? "true" : "false");
+         pcs.firePropertyChange(Constants.TIMEOUT_ENABLED, null, null); // values are not used
+         changed = true;
+      }
+      if (!getProperty(Constants.TIMEOUT_TIME).equals(fieldTimeoutTime.getText())) {
+         props.setProperty(Constants.TIMEOUT_TIME, fieldTimeoutTime.getText());
+         changed = true;
+      }
+      if (!getProperty(Constants.SAVE_ON_TIMEOUT).equals(saveOnTimeoutCheckBox.isSelected() ? "true" : "false")) {
+         props.setProperty(Constants.SAVE_ON_TIMEOUT, saveOnTimeoutCheckBox.isSelected() ? "true" : "false");
+         changed = true;
+      }
+      /* language setting */
+      int selectedIndex = fieldLanguages.getSelectedIndex();
+      if (!getProperty(Constants.LANGUAGE).equals(languages[selectedIndex])) {
+         props.setProperty(Constants.LANGUAGE, locales[selectedIndex]);
+         if (selectedIndex > 0) {
+            Locale.setDefault(new Locale(locales[selectedIndex]));
+         } else {
+            Locale.setDefault(Locale.getDefault());
+         }
+         changed = true;
+      }
+      
       if (changed) {
          saveProperties();
       }
@@ -794,6 +937,12 @@ public class SecretsProperties implements ActionListener {
             break;
          }
       }
+		enableTimeoutCheckBox.setSelected(
+		              defaultProps.getProperty(Constants.TIMEOUT_ENABLED).equals("true") ? true : false);
+		saveOnTimeoutCheckBox.setSelected(
+                  defaultProps.getProperty(Constants.SAVE_ON_TIMEOUT).equals("true") ? true : false);
+		fieldTimeoutTime.setText(defaultProps.getProperty(Constants.TIMEOUT_TIME));
+		enableTimeoutFields(enableTimeoutCheckBox.isSelected()); // enable/disable fields
 	}
 	
 	/*
@@ -910,7 +1059,6 @@ public class SecretsProperties implements ActionListener {
     }
     return validity;
   }
-  
 	
 	/**
 	 * Enable/disable backup fields
@@ -923,6 +1071,17 @@ public class SecretsProperties implements ActionListener {
      fieldBackupCountText.setEnabled(enable);
      fieldBackupCount.setEnabled(enable);
   }
+  
+  /**
+   * Enable/disable timeout fields
+   * @param enable
+   */
+ private void enableTimeoutFields(boolean enable) {
+    fieldTimeoutTimeText.setEnabled(enable);
+    fieldTimeoutTime.setEnabled(enable);
+    fieldSaveOnTimeoutText.setEnabled(enable);
+    saveOnTimeoutCheckBox.setEnabled(enable);
+ }
 	
 	/**
     * @return the logRecords

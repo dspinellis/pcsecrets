@@ -72,14 +72,18 @@ public class MainFormListener implements ListSelectionListener {
             form.setInputFromSecret(selectedSecret);
             form.getFieldDate().setText(selectedSecret.getFormattedTimestamp());
             form.setChanged(false);
+            
+            // set inactivity timer if necessary
+            mainWindow.setIdleTimer();
          }
       }
    }
    
    private void saveIfRequired(SecretsCollection listModel) {
+      String descr = form.getFieldDescr().getText().trim();
       Object[] options = { Messages.getString("InputForm.update"), Messages.getString("InputForm.discard") };
       int n = JOptionPane.showOptionDialog(mainWindow,
-                  Messages.getString("InputForm.changed"),
+                  MessageFormat.format(Messages.getString("InputForm.changed"), descr),
                   Messages.getString("InputForm.changedtitle"),
                   JOptionPane.YES_NO_OPTION,
                   JOptionPane.INFORMATION_MESSAGE,

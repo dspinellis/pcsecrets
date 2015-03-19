@@ -37,6 +37,8 @@ import java.net.URI;
 import java.text.MessageFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -56,6 +58,7 @@ import javax.swing.JSplitPane;
 import javax.swing.JTextArea;
 import javax.swing.KeyStroke;
 import javax.swing.ListSelectionModel;
+import javax.swing.Timer;
 import javax.swing.border.EtchedBorder;
 
 /**
@@ -87,6 +90,11 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
 	private UDPDiscovery udpDiscovery;
    private DatagramSocket socket;
    private final int discoveryPort = 53165;
+   
+   private Timer idleTimer;
+   private static int TIMER_INTERVAL = 1000; // millisecs
+   private Date timeoutDate;
+   private boolean idleTimeoutHasOccurred;
 	
 	/**
 	 * Constructor
@@ -105,6 +113,7 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
       setIconImages(icons);
       
 		createUI();
+		setIdleTimer();
 		
 		jSecretsList.addListSelectionListener(new MainFormListener(this, inputForm));
 		addWindowListener(new UnsavedChangesHandler());
@@ -118,10 +127,6 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
                      Messages.getString("MainWindow.alreadyrunningtitle"), JOptionPane.ERROR_MESSAGE);
          throw new IllegalStateException("PCSecrets is already running");
       }
-
-      /* start the UDP discovery thread */
-      udpDiscovery = new UDPDiscovery();
-      udpDiscovery.start();
 		
 		/* initial testing - add test data using CTRL-SHIFT-T */
 		Action insertTestData = new AbstractAction() {
@@ -226,9 +231,15 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
 	 */
 	@Override
 	public void actionPerformed(ActionEvent event) {
-		areaMsg.setText(""); /* clear msg area */
-		logger.log(Level.INFO, "command is " + event.getActionCommand());
-		inputForm.setChanged(false); // ignore if form data was changed
+		
+		/* stuff to do if not timeout tick */
+		if (!event.getActionCommand().equals(Constants.TIMEOUT_TICK)) {
+		   logger.log(Level.FINE, "command is " + event.getActionCommand());
+		   areaMsg.setText(""); // clear msg area
+		   inputForm.setChanged(false); // ignore if form data was changed
+		}
+		
+		/* handle individual actions */
 		if (event.getActionCommand().equals(Constants.CLEAR)) {
 			inputForm.clear();
 			jSecretsList.clearSelection();
@@ -273,6 +284,11 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
 		   areaMsg.setText(MessageFormat.format(Messages.getString("DataHandler.saved"), listModel.getSize()));
 		   listModel.setChanged(false); // clear the changed indicator after save
 		} else if (event.getActionCommand().equals(Constants.SYNC)) {
+	      /* start the UDP discovery thread if not already started */
+		   if (udpDiscovery == null) {
+		      udpDiscovery = new UDPDiscovery();
+	         udpDiscovery.start();
+		   }
 		  /* the sync dialog is launched when device input is received */
 			int port = Integer.parseInt(props.getProperty(Constants.SERVERPORT));
 			byte[] syncPswd = null;
@@ -317,9 +333,24 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
                logger.log(Level.WARNING, "Help uri problem: " + e);
             }
          }
+      } else if (event.getActionCommand().equals(Constants.TIMEOUT_TICK)) {
+         // check if timeout date has been passed
+         Calendar nowCal = Calendar.getInstance();
+         Calendar timeoutCal = Calendar.getInstance();
+         timeoutCal.setTime(timeoutDate);
+         if (nowCal.after(timeoutCal)) {
+            idleTimer.stop();
+            idleTimeoutHasOccurred = true;
+            logger.log(Level.INFO, "PCSecrets idle timeout");
+            this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
+         }
       } else if (event.getActionCommand().equals(Constants.EXIT)) {
          this.dispatchEvent(new WindowEvent(this, WindowEvent.WINDOW_CLOSING));
       }
+		
+		if (!event.getActionCommand().equals(Constants.TIMEOUT_TICK)) {
+	      setIdleTimer();		   
+		}
    }
 
 	/* Completion of communication to/from the phone is handled by property change */
@@ -390,8 +421,35 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
 				sendErrorStatusToPhone(OutputErrorPhone.SYNC_CANCELLED);
 				getAreaMsg().setText(Messages.getString("MainWindow.synccancelled"));
 			}
+		} else if (event.getPropertyName().equals(Constants.TIMEOUT_ENABLED)) {
+		   setIdleTimer();
 		}
 	}
+   
+   /**
+    * (re)start the inactivity detection thread, if requested
+    */
+   public void setIdleTimer() {
+      if (props.getProperty(Constants.TIMEOUT_ENABLED).equals("true")) {
+         int timeoutTime = Integer.parseInt(props.getProperty(Constants.TIMEOUT_TIME));
+         timeoutTime *= 60 * 1000;
+         timeoutDate = new Date(System.currentTimeMillis() + timeoutTime);
+         logger.log(Level.FINE, "Inactivity timeout set");
+         if (idleTimer == null) {
+            idleTimer = new Timer(TIMER_INTERVAL, this);
+            idleTimer.setActionCommand(Constants.TIMEOUT_TICK);
+         }
+         if (!idleTimer.isRunning()) {
+            idleTimer.start();
+            logger.log(Level.FINE, "Inactivity timeout started");
+         }
+      } else {
+         if (idleTimer != null) {
+            idleTimer.stop();
+            logger.log(Level.FINE, "Inactivity timeout cancelled");
+         }
+      }
+   }
 	
 	private void sendErrorStatusToPhone(byte status) {
 	   outputErrorPhone = new OutputErrorPhone(this);
@@ -528,13 +586,16 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
       @Override
       public void windowClosing(WindowEvent e) {
          if (MainWindow.this.listModel.isChanged()) {
-            int rc = JOptionPane.showConfirmDialog(MainWindow.this, 
-                                          Messages.getString("MainWindow.savechanges"), 
-                                          Messages.getString("MainWindow.unsavedchanges"), 
-                                          JOptionPane.YES_NO_CANCEL_OPTION);
+            boolean saveDefault = props.getProperty(Constants.SAVE_ON_TIMEOUT).equals("true");
+            int rc = saveDefault ? JOptionPane.YES_OPTION : JOptionPane.NO_OPTION;
+            if (!idleTimeoutHasOccurred) {
+               rc = JOptionPane.showConfirmDialog(MainWindow.this, 
+                           Messages.getString("MainWindow.savechanges"), 
+                           Messages.getString("MainWindow.unsavedchanges"), 
+                           JOptionPane.YES_NO_CANCEL_OPTION);
+            }
             if (rc == JOptionPane.YES_OPTION) {
                saveSecrets();
-               getAreaMsg().setText(MessageFormat.format(Messages.getString("DataHandler.saved"), listModel.getSize()));
             } else if (rc == JOptionPane.CANCEL_OPTION) {
               return;
             } else {
@@ -546,7 +607,9 @@ public class MainWindow extends PropertyChangeWindow implements ActionListener  
          } catch (Exception e1) {
             // ignore
          }
-         
+         if (idleTimer != null) {
+            idleTimer.stop();
+         }
          logger.log(Level.INFO, "PCSecrets is terminating");
          MainWindow.this.dispose();
       }

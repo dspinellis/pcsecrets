@@ -707,10 +707,33 @@ in the home directory and named java{n}.log.</P>
 By default the log level is set to <I>warning</I>. Be aware that with
 the log level set to a finer level (<I>info</I> or <I>fine</I>)
 diagnostic information may be written to the log that could be used
-to compromise the security of your secrets. So do not as a matter of
-course set the log level below <I>warning</I>, and if you do, make
+to compromise the security of your secrets (no potentially sensitive
+data is written to the log before the password is entered). So do not as a matter of
+course set the log level below <I>warning</I>, and if you do change to a finer level, make
 sure you reset the log level afterwards and securely delete the Java
 logs.</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.bw1tvxg9vxkb"></A>
+Timeout</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Here you can request that PCSecrets closes after a period of inactivity. This period deliberately includes any
+time that the computer is suspended or hibernated, so that security is not compromised by the
+computer going to sleep during execution and being resumed by someone else at a later time.
+Obviously the program cannot close while the computer is suspended, but on resumption, if the inactivity
+period has been exceeded the program will immediately close.
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+<BR>
+</P>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Check the option if you want any outstanding changes to be saved automatically.  If this is not checked,
+unsaved changes will be discarded.
+</P>
+<H4 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.bw1tvxg9vxkb"></A>
+Language</H4>
+<P STYLE="margin-bottom: 0cm; line-height: 115%; page-break-before: auto; page-break-after: auto">
+Currently only English and French are supported. Language change does not take effect until the program
+is restarted.
+</P>
 <H3 STYLE="line-height: 115%; page-break-before: auto; page-break-after: auto"><A NAME="h.s93glnxroqf"></A>
 </H3>
 <H3 STYLE="line-height: 115%; page-break-before: always"><A NAME="h.ep0a3ac691n9"></A><A NAME="h.4wqd41vwlabs"></A>

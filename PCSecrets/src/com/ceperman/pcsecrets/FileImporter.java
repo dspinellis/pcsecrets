@@ -103,7 +103,8 @@ public class FileImporter {
    private static int TYPE_UNKNOWN = 0;
    private static int TYPE_CSV = 1;
    private static int TYPE_JSON = 2;
-   private static int TYPE_XML = 2;
+   // bugfix: JSON and XML had same value causing wrong err msg if invalid XML
+   private static int TYPE_XML = 3;
    
    private boolean hasDataHeader = false; // assume no data header
    private boolean useDataHeader = true; // use data header if present
@@ -1059,7 +1060,7 @@ public class FileImporter {
          JSONObject jo = (JSONObject)rootObject;
          String[] keys = JSONObject.getNames(jo);
          for (int i = 0; i < keys.length; i++) {
-            System.out.println("key: " + keys[i] + " has a value of type " + jo.get(keys[i]).getClass().getName());
+//            System.out.println("key: " + keys[i] + " has a value of type " + jo.get(keys[i]).getClass().getName());
             Object value = jo.get(keys[i]);
             if (value instanceof JSONObject || value instanceof JSONArray) {
                if (value instanceof JSONObject && JSONObject.getNames((JSONObject)value) == null) {

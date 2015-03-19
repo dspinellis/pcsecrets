@@ -37,7 +37,7 @@ the 'Regenerate Ciphers' option of the File menu, as described in the PCSecrets 
 Java
 
 A Java runtime is required for execution.  You can use the  Oracle/Sun Java, or OpenJDK on Linux.
-PCSecrets requires at least Java version 6, but the latest Java version 7 is recommended. If you
+PCSecrets requires at least Java version 6, but Java version 7 (or later) is recommended. If you
 have Java 6 installed, you would be advised to replace it with the latest Java 7 as there are known
 to be security issues with the earlier versions. There are also problems with the Nimbus UI Look
 and Feel (the best looking interface) with Java 6 prior to version 1.6.10 (Mac users take note).

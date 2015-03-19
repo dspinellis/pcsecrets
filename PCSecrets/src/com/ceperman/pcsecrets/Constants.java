@@ -52,6 +52,7 @@ public class Constants {
 	final static String CHANGEPSWD = "changepswd";
 	final static String REGENCIPHERS = "regenciphers";
 	final static String SYSINFO = "sysinfo";
+   final static String TIMEOUT_TICK = "timeoutTick";
 	
 	/* property changes */
 	final static String PHONE_RECEIVE = "phonereceive";
@@ -82,4 +83,8 @@ public class Constants {
 	final static String MAX_BACKUP_COUNT = "maxBackups";
 	final static String KEY_SETUP_TIME = "keySetupTime";
 	final static String LOOK_AND_FEEL = "lookAndFeel";
+   final static String LANGUAGE = "language";
+   final static String TIMEOUT_ENABLED = "timeoutEnabled";
+   final static String TIMEOUT_TIME = "timeoutTime";
+   final static String SAVE_ON_TIMEOUT = "saveOnTimeout";
 }
