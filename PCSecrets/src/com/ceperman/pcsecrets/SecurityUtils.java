@@ -121,8 +121,10 @@ public class SecurityUtils {
 	 * Add the BouncyCastle JCE provider if not already available
 	 */
 	public static void checkBCProvider() {
+        logger.log(Level.FINE, "Checking BouncyCastle JCE provider");
 		if (Security.getProvider("BC") == null) {
-			logger.log(Level.FINE, "Adding BouncyCastle JCE provider");
+			Security.setProperty("crypto.policy", "unlimited");
+            logger.log(Level.FINE, "Adding BouncyCastle JCE provider");
 			Security.addProvider(new org.bouncycastle.jce.provider.BouncyCastleProvider());
 			logger.log(Level.FINE, "Added BouncyCastle JCE provider successfully");
 		}
@@ -307,7 +309,7 @@ public class SecurityUtils {
 			info.decryptCipher.init(Cipher.DECRYPT_MODE, spec);
 		} catch (Exception ex) {
 		   String msg = "Error creating ciphers - " + ex;
-			logger.log(Level.SEVERE, msg);
+			logger.log(Level.SEVERE, msg, ex);
 			throw new RuntimeException(msg);
 		}
 		logger.log(Level.FINE, "createCiphers: time to create ciphers for " + info.parms.rounds + " rounds : " + (System.currentTimeMillis() - start) + "ms");
