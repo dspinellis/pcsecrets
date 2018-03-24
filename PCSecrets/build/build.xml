@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project default="temp_build" name="Create distribution zip file">
+<project default="create_run_jar" name="Create distribution zip file">
     <!-- Generate distribution zip with executable jars and doc file -->
     <!--ANT 1.7 is required -->
     
@@ -39,41 +39,50 @@
     </target>
     
     <target name="clean">
-			<delete includeEmptyDirs="true">
-				<fileset dir="${src.dir}/bin" includes="**/*" defaultexcludes="no" />
-			</delete>
+		<delete includeEmptyDirs="true">
+			<fileset dir="${src.dir}/bin" includes="**/*" defaultexcludes="no" />
+		</delete>
     </target>
     
     <target name="create_run_jar" depends="compile">
-        <!-- Create runnable jar with Jar-in-Jar Loader -->
-        <jar destfile="${build.dir}/pcsecrets.jar">
+        <!-- Create runnable jar by opening up all jars -->
+		<jar destfile="${build.dir}/pcsecrets.jar">
             <manifest>
-                <attribute name="Main-Class" value="org.eclipse.jdt.internal.jarinjarloader.JarRsrcLoader"/>
-                <attribute name="Rsrc-Main-Class" value="com.ceperman.pcsecrets.PCSecrets"/>
-                <attribute name="Class-Path" value="."/>
-                <attribute name="Rsrc-Class-Path" value="./ bcprov-jdk15on-149.jar json-org.jar json-path-0.9.0.jar json-smart-1.2.jar slf4j-api-1.7.5.jar"/>
+				<attribute name="Main-Class" value="com.ceperman.pcsecrets.PCSecrets"/>
             </manifest>
-            <zipfileset src="${lib.dir}/jar-in-jar-loader.zip"/>
-	    <fileset dir="${classes.dir}"/>
-            <zipfileset dir="${lib.dir}" includes="bcprov-jdk15on-149.jar,json-org.jar,json-path-0.9.0.jar,json-smart-1.2.jar,slf4j-api-1.7.5.jar"/>
+			<fileset dir="${classes.dir}" />
+			<restrict>
+				<!-- Remove signatures to avoid the "Invalid signature file
+					 digest for Manifest main attributes" error.
+					 See https://stackoverflow.com/questions/1274879/ant-exclude-files-from-merged-jar-file -->
+				<not>
+					<name name="META-INF/*.SF" />
+				</not>
+				<archives>
+					<zips>
+						<fileset dir="${lib.dir}" includes="*.jar"/>
+					</zips>
+				</archives>
+			</restrict>
         </jar>
     </target>
 
     <target name="compile" depends="init" description="compile the source" >
-	<javac srcdir="${src.dir}/src" destdir="${classes.dir}" debug="true"
-	    deprecation="true" includeantruntime="false" >
-	    <compilerarg value="-Xlint"/>
-	    <classpath>
-		<fileset dir="${lib.dir}">
-		    <include name="**/*.jar"/>
-		</fileset>
-	    </classpath>
-	</javac>
-	<copy todir="${classes.dir}">
-	    <fileset dir="${src.dir}/src">
-	       <include name="**/*.properties"/>
-	    </fileset>
-	</copy>
+		<javac srcdir="${src.dir}/src" destdir="${classes.dir}" debug="true"
+			deprecation="true" includeantruntime="false" >
+			<compilerarg value="-Xlint"/>
+			<classpath>
+			<fileset dir="${lib.dir}">
+				<include name="**/*.jar"/>
+			</fileset>
+			</classpath>
+		</javac>
+		<copy todir="${classes.dir}">
+			<fileset dir="${src.dir}/src">
+			   <include name="**/*.properties"/>
+			   <include name="resources/**"/>
+			</fileset>
+		</copy>
     </target>
 
     <target name="create_zip" depends="delete_files, create_run_jar">
