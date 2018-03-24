@@ -266,7 +266,7 @@ public class PCSecrets {
 			      logger.log(Level.SEVERE, msg);
 			      System.exit(0);
 			   } catch (Throwable t) {
-			      logger.log(Level.SEVERE, t.toString());
+			      logger.log(Level.SEVERE, t.toString(), t);
 			      System.exit(0);
 			   }
 			}
