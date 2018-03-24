@@ -9,12 +9,20 @@
     <property name="lib.dir" location="jars" />
     <!-- source dir for the program material -->
     <property name="src.dir" location=".." />
+    <!-- target dir for the compiled files -->
+    <property name="classes.dir" location="classes" />
     
     <target name="build_date">
         <tstamp>
           <format property="current.time" pattern="yyyyMMdd_HHmmss" />
         </tstamp>
         <echo file="${build.dir}/build.properties" append="false">build_date=${current.time}</echo>
+    </target>
+
+    <target name="init">
+	<!-- Create the build directory structure used by compile -->
+	<mkdir dir="${build.dir}"/>
+	<mkdir dir="${classes.dir}"/>
     </target>
     
     <target name="version_build" depends="build_date">
@@ -36,7 +44,7 @@
 			</delete>
     </target>
     
-    <target name="create_run_jar">
+    <target name="create_run_jar" depends="compile">
         <!-- Create runnable jar with Jar-in-Jar Loader -->
         <jar destfile="${build.dir}/pcsecrets.jar">
             <manifest>
@@ -46,11 +54,23 @@
                 <attribute name="Rsrc-Class-Path" value="./ bcprov-jdk15on-149.jar json-org.jar json-path-0.9.0.jar json-smart-1.2.jar slf4j-api-1.7.5.jar"/>
             </manifest>
             <zipfileset src="${lib.dir}/jar-in-jar-loader.zip"/>
-            <fileset dir="${src.dir}/bin"/>
+	    <fileset dir="${classes.dir}"/>
             <zipfileset dir="${lib.dir}" includes="bcprov-jdk15on-149.jar,json-org.jar,json-path-0.9.0.jar,json-smart-1.2.jar,slf4j-api-1.7.5.jar"/>
         </jar>
     </target>
-    
+
+    <target name="compile" depends="init" description="compile the source" >
+	<javac srcdir="${src.dir}/src" destdir="${classes.dir}" debug="true"
+	    deprecation="true" includeantruntime="false" >
+	    <compilerarg value="-Xlint"/>
+	    <classpath>
+		<fileset dir="${lib.dir}">
+		    <include name="**/*.jar"/>
+		</fileset>
+	    </classpath>
+	</javac>
+    </target>
+
     <target name="create_zip" depends="delete_files, create_run_jar">
         <!-- Create distribution zip file -->
         <zip destfile="${build.dir}/pcsecrets-${this_version}.zip">
