@@ -4,11 +4,11 @@
     <!--ANT 1.7 is required -->
     
     <!-- target dir for the distribution files -->
-    <property name="build.dir" location="/quadra-shared/Chris/build/pcsecrets" />
+    <property name="build.dir" location="pcsecrets" />
     <!-- source dir for externally distributed jars -->
-    <property name="lib.dir" location="/quadra-shared/Chris/build/jars" />
+    <property name="lib.dir" location="jars" />
     <!-- source dir for the program material -->
-    <property name="src.dir" location="/home/chris/git/PCSecrets/PCSecrets" />
+    <property name="src.dir" location=".." />
     
     <target name="build_date">
         <tstamp>
