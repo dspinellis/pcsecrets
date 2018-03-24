@@ -30,6 +30,11 @@ import java.util.logging.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.SecretKey;
+import javax.crypto.SecretKeyFactory;
+import javax.crypto.spec.IvParameterSpec;
+import javax.crypto.spec.PBEKeySpec;
+import javax.crypto.spec.PBEParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.mindrot.jbcrypt.BCrypt;
@@ -70,8 +75,13 @@ import com.ceperman.utils.Strings;
 public class SecurityUtils {
 	private static Logger logger = Logger.getLogger(SecurityUtils.class.getName());
 	
-	/* Blowfish AES encryption with SHA key */
-	private static final String KEY_FACTORY = "PBEWITHSHA-256AND256BITAES-CBC-BC";
+        // Factory to use for version 2 of encryption.
+        private static final String KEY_FACTORY_V2 = "AES";
+        private static final String CIPHER_FACTORY_V2 = "AES/CBC/PKCS5Padding";
+
+        private static final String KEY_FACTORY = "AES";
+        private static final String CIPHER_FACTORY = "AES/CBC/PKCS5Padding";
+
 	/* encrypted file header id */
 	static final byte[] SIGNATURE = {0x22, 0x34, 0x56, 0x79};
 	
@@ -301,12 +311,16 @@ public class SecurityUtils {
 			// generate the ciphers
 			BCrypt bcrypt = new BCrypt();
 			byte[] rawBytes = bcrypt.crypt_raw(passwordWithDelim, info.parms.salt, info.parms.rounds, plaintext);
-			SecretKeySpec spec = new SecretKeySpec(rawBytes, KEY_FACTORY);
-			info.encryptCipher = Cipher.getInstance(KEY_FACTORY);
-			info.encryptCipher.init(Cipher.ENCRYPT_MODE, spec);
+            SecretKeySpec spec = new SecretKeySpec(rawBytes, KEY_FACTORY);
+            // For backwards compatibility with secrets created on Android M and
+            // earlier, create an initial vector of all zeros.
+            IvParameterSpec params = new IvParameterSpec(new byte[16]);
 
-			info.decryptCipher = Cipher.getInstance(KEY_FACTORY);
-			info.decryptCipher.init(Cipher.DECRYPT_MODE, spec);
+            info.encryptCipher = Cipher.getInstance(CIPHER_FACTORY);
+            info.encryptCipher.init(Cipher.ENCRYPT_MODE, spec, params);
+
+			info.decryptCipher = Cipher.getInstance(CIPHER_FACTORY);
+			info.decryptCipher.init(Cipher.DECRYPT_MODE, spec, params);
 		} catch (Exception ex) {
 		   String msg = "Error creating ciphers - " + ex;
 			logger.log(Level.SEVERE, msg, ex);
@@ -339,6 +353,8 @@ public class SecurityUtils {
 		byte[] salt = null;
 		int rounds = 0;
 		
+        logger.log(Level.INFO, "getCipherParms");
+        input.reset();
 		input.read(); // version, not currently used
 		input.read(signature); // signature bytes
 		if (Arrays.equals(signature, SIGNATURE)) {
@@ -404,12 +420,15 @@ public class SecurityUtils {
 	public static void main(String[] args) throws UnsupportedEncodingException {
 
 	    long start = System.currentTimeMillis();
+        checkBCProvider();
+        SecretsProperties.getInitialInstance(".", true);
 	    
 	    try {
 	    	CipherInfo cipherInfo = createCiphers("secretstring".getBytes("UTF-8"), null);
 	    	
 			// Our cleartext
-			byte[] cleartext = "This is another example".getBytes();
+			byte[] cleartext = "This is another example         ".getBytes();
+			System.out.println("Clear string: " + Strings.toHex(cleartext));
 
 			// Encrypt the cleartext
 			byte[] ciphertext = cipherInfo.encryptCipher.doFinal(cleartext);
