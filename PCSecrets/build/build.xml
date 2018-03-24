@@ -44,7 +44,7 @@
 		</delete>
     </target>
     
-    <target name="create_run_jar" depends="compile">
+    <target name="create_run_jar" depends="compile,bcjar">
         <!-- Create runnable jar by opening up all jars -->
 		<jar destfile="${build.dir}/pcsecrets.jar">
             <manifest>
@@ -95,7 +95,14 @@
             <zipfileset dir="${src.dir}/build/linux"/>
         </zip>
     </target>
-    
+
+    <target name="bcjar" >
+		<get src="https://www.bouncycastle.org/download/bcprov-jdk15on-159.jar"
+			dest="${lib.dir}/bcprov-jdk15on-159.jar"
+			verbose="true"
+			usetimestamp="true"/>
+    </target>
+
     <target name="delete_files">
         <delete file="${build.dir}/pcsecrets.jar"/>
     </target>
