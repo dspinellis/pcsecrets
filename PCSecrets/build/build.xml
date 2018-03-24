@@ -69,6 +69,11 @@
 		</fileset>
 	    </classpath>
 	</javac>
+	<copy todir="${classes.dir}">
+	    <fileset dir="${src.dir}/src">
+	       <include name="**/*.properties"/>
+	    </fileset>
+	</copy>
     </target>
 
     <target name="create_zip" depends="delete_files, create_run_jar">
