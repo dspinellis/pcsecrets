@@ -41,7 +41,7 @@ Included Jar Licences
 
 Included jar files are:
 
-bcprov-jdk16-146.jar
+bcprov-jdk15on-159.jar
 json-org.jar
 json-path-0.9.0.jar
 json-smart-1.2.jar
